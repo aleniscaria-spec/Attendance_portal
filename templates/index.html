@@ -1,0 +1,1196 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Live Dashboard | Attendance Portal</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+
+        tailwind.config = {
+
+            darkMode: "class",
+
+            theme: {
+
+                extend: {
+
+                    fontFamily: {
+
+                        sans: [
+                            "Inter",
+                            "system-ui",
+                            "sans-serif"
+                        ]
+
+                    }
+
+                }
+
+            }
+
+        };
+
+    </script>
+
+</head>
+
+
+<body
+    class="min-h-screen bg-slate-100
+           dark:bg-slate-950
+           text-slate-900
+           dark:text-white
+           transition-colors"
+>
+
+
+<!-- NAVBAR -->
+
+<nav
+    class="border-b border-slate-200
+           dark:border-white/10
+           bg-white/80
+           dark:bg-slate-950/80
+           backdrop-blur-xl
+           sticky top-0 z-50"
+>
+
+    <div
+        class="max-w-7xl mx-auto px-5
+               h-16 flex items-center
+               justify-between"
+    >
+
+        <a
+            href="/"
+            class="font-bold text-lg"
+        >
+            Attendance Portal
+        </a>
+
+
+        <div class="flex items-center gap-3">
+
+            <span
+                id="connectionBadge"
+                class="px-3 py-1.5 rounded-full
+                       text-xs font-medium
+                       bg-amber-100
+                       dark:bg-amber-500/10
+                       text-amber-700
+                       dark:text-amber-400"
+            >
+                Connecting
+            </span>
+
+
+            <button
+                id="themeButton"
+                class="w-10 h-10 rounded-xl
+                       border border-slate-200
+                       dark:border-white/10"
+            >
+                ◐
+            </button>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+
+<main
+    class="max-w-7xl mx-auto px-5 py-8"
+>
+
+
+    <!-- HEADER -->
+
+    <div
+        class="flex flex-col md:flex-row
+               md:items-end
+               justify-between gap-5 mb-8"
+    >
+
+        <div>
+
+            <p
+                class="text-sm text-blue-500
+                       font-medium mb-2"
+            >
+                LIVE ATTENDANCE
+            </p>
+
+            <h1
+                class="text-3xl md:text-4xl
+                       font-bold"
+            >
+                Face Recognition Scanner
+            </h1>
+
+            <p
+                class="text-slate-500
+                       dark:text-slate-400 mt-2"
+            >
+                Look at the camera to record your attendance.
+            </p>
+
+        </div>
+
+
+        <a
+            href="/"
+            class="px-4 py-2.5 rounded-xl
+                   border border-slate-200
+                   dark:border-white/10
+                   hover:bg-slate-100
+                   dark:hover:bg-white/5"
+        >
+            ← Portal
+        </a>
+
+    </div>
+
+
+
+    <!-- STAT CARDS -->
+
+    <div
+        class="grid grid-cols-1
+               sm:grid-cols-3 gap-4 mb-6"
+    >
+
+
+        <div
+            class="rounded-2xl p-5
+                   bg-white
+                   dark:bg-white/[0.05]
+                   border border-slate-200
+                   dark:border-white/10"
+        >
+
+            <p
+                class="text-sm text-slate-500
+                       dark:text-slate-400"
+            >
+                Registered Students
+            </p>
+
+            <p
+                id="totalStudents"
+                class="text-3xl font-bold mt-2"
+            >
+                0
+            </p>
+
+        </div>
+
+
+
+        <div
+            class="rounded-2xl p-5
+                   bg-white
+                   dark:bg-white/[0.05]
+                   border border-slate-200
+                   dark:border-white/10"
+        >
+
+            <p
+                class="text-sm text-slate-500
+                       dark:text-slate-400"
+            >
+                Present Today
+            </p>
+
+            <p
+                id="presentToday"
+                class="text-3xl font-bold mt-2"
+            >
+                0
+            </p>
+
+        </div>
+
+
+
+        <div
+            class="rounded-2xl p-5
+                   bg-white
+                   dark:bg-white/[0.05]
+                   border border-slate-200
+                   dark:border-white/10"
+        >
+
+            <p
+                class="text-sm text-slate-500
+                       dark:text-slate-400"
+            >
+                Last Scanned
+            </p>
+
+            <p
+                id="lastScanned"
+                class="text-xl font-bold mt-2 truncate"
+            >
+                —
+            </p>
+
+            <p
+                id="lastScannedTime"
+                class="text-xs text-slate-500 mt-1"
+            >
+                --
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- CAMERA + RESULT -->
+
+    <div
+        class="grid lg:grid-cols-[1fr_340px]
+               gap-6"
+    >
+
+
+        <!-- CAMERA -->
+
+        <section
+            class="rounded-3xl overflow-hidden
+                   bg-black
+                   border border-slate-200
+                   dark:border-white/10
+                   shadow-xl"
+        >
+
+            <div
+                class="relative
+                       aspect-video
+                       bg-black"
+            >
+
+                <video
+                    id="camera"
+                    autoplay
+                    muted
+                    playsinline
+                    class="absolute inset-0
+                           w-full h-full
+                           object-contain"
+                ></video>
+
+
+                <canvas
+                    id="overlay"
+                    class="absolute inset-0
+                           w-full h-full
+                           pointer-events-none"
+                ></canvas>
+
+
+                <!-- Scan line -->
+
+                <div
+                    class="absolute left-0 right-0
+                           h-px bg-blue-400/70
+                           animate-pulse"
+                    style="top:50%"
+                ></div>
+
+
+                <!-- CAMERA STATUS -->
+
+                <div
+                    id="cameraMessage"
+                    class="absolute inset-0
+                           flex items-center
+                           justify-center
+                           bg-black/50
+                           text-white"
+                >
+
+                    <div class="text-center">
+
+                        <div
+                            class="text-4xl mb-3"
+                        >
+                            📷
+                        </div>
+
+                        <p
+                            class="font-medium"
+                        >
+                            Starting camera...
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="p-4 flex flex-col
+                       sm:flex-row
+                       sm:items-center
+                       justify-between gap-3
+                       border-t border-white/10"
+            >
+
+                <div>
+
+                    <p
+                        id="scanStatus"
+                        class="font-medium text-white"
+                    >
+                        Waiting for camera
+                    </p>
+
+                    <p
+                        id="scanSubstatus"
+                        class="text-sm text-slate-400"
+                    >
+                        Allow camera access when prompted.
+                    </p>
+
+                </div>
+
+
+                <button
+                    id="retryCamera"
+                    class="hidden px-4 py-2
+                           rounded-xl
+                           bg-blue-600
+                           hover:bg-blue-500
+                           text-white"
+                >
+                    Start Camera
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- SIDE PANEL -->
+
+        <aside
+            class="rounded-3xl p-6
+                   bg-white
+                   dark:bg-white/[0.05]
+                   border border-slate-200
+                   dark:border-white/10"
+        >
+
+            <p
+                class="text-sm text-blue-500
+                       font-semibold"
+            >
+                RECOGNITION STATUS
+            </p>
+
+
+            <div
+                id="recognitionIcon"
+                class="w-16 h-16
+                       rounded-2xl
+                       bg-slate-100
+                       dark:bg-white/5
+                       flex items-center
+                       justify-center
+                       text-3xl mt-5"
+            >
+                👤
+            </div>
+
+
+            <h2
+                id="recognitionName"
+                class="text-2xl font-bold mt-5"
+            >
+                No student detected
+            </h2>
+
+
+            <p
+                id="recognitionStatus"
+                class="text-slate-500
+                       dark:text-slate-400 mt-2"
+            >
+                Position your face inside the camera.
+            </p>
+
+
+            <div
+                class="mt-8 space-y-3
+                       text-sm"
+            >
+
+                <div
+                    class="flex justify-between"
+                >
+
+                    <span
+                        class="text-slate-500"
+                    >
+                        Scanner
+                    </span>
+
+                    <span
+                        id="scannerState"
+                        class="font-medium"
+                    >
+                        Initializing
+                    </span>
+
+                </div>
+
+
+                <div
+                    class="flex justify-between"
+                >
+
+                    <span
+                        class="text-slate-500"
+                    >
+                        Attendance
+                    </span>
+
+                    <span
+                        id="attendanceState"
+                        class="font-medium"
+                    >
+                        —
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="mt-8 p-4
+                       rounded-2xl
+                       bg-blue-50
+                       dark:bg-blue-500/10"
+            >
+
+                <p
+                    class="font-medium
+                           text-blue-700
+                           dark:text-blue-300"
+                >
+                    Scanning tips
+                </p>
+
+                <ul
+                    class="mt-2 space-y-1
+                           text-sm
+                           text-slate-600
+                           dark:text-slate-400"
+                >
+
+                    <li>• Look directly at the camera</li>
+                    <li>• Keep your face clearly visible</li>
+                    <li>• Avoid very dark lighting</li>
+                    <li>• Only one person should be visible</li>
+
+                </ul>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+
+</main>
+
+
+
+<script>
+
+const video = document.getElementById("camera");
+const canvas = document.getElementById("overlay");
+const cameraMessage = document.getElementById("cameraMessage");
+
+const connectionBadge =
+    document.getElementById("connectionBadge");
+
+const scanStatus =
+    document.getElementById("scanStatus");
+
+const scanSubstatus =
+    document.getElementById("scanSubstatus");
+
+const recognitionName =
+    document.getElementById("recognitionName");
+
+const recognitionStatus =
+    document.getElementById("recognitionStatus");
+
+const recognitionIcon =
+    document.getElementById("recognitionIcon");
+
+const scannerState =
+    document.getElementById("scannerState");
+
+const attendanceState =
+    document.getElementById("attendanceState");
+
+const retryButton =
+    document.getElementById("retryCamera");
+
+
+let stream = null;
+let scanning = false;
+let processing = false;
+
+
+
+// ============================================================
+// THEME
+// ============================================================
+
+function loadTheme() {
+
+    const saved =
+        localStorage.getItem("theme");
+
+    if (
+        saved === "dark" ||
+        (
+            !saved &&
+            window.matchMedia(
+                "(prefers-color-scheme: dark)"
+            ).matches
+        )
+    ) {
+
+        document.documentElement.classList.add(
+            "dark"
+        );
+
+    }
+
+}
+
+
+loadTheme();
+
+
+document
+    .getElementById("themeButton")
+    .addEventListener(
+        "click",
+        () => {
+
+            document.documentElement.classList.toggle(
+                "dark"
+            );
+
+            localStorage.setItem(
+                "theme",
+                document.documentElement.classList.contains(
+                    "dark"
+                )
+                    ? "dark"
+                    : "light"
+            );
+
+        }
+    );
+
+
+
+// ============================================================
+// CAMERA
+// ============================================================
+
+async function startCamera() {
+
+    try {
+
+        if (!navigator.mediaDevices ||
+            !navigator.mediaDevices.getUserMedia) {
+
+            throw new Error(
+                "Camera API is not supported."
+            );
+
+        }
+
+
+        stream =
+            await navigator.mediaDevices.getUserMedia({
+
+                video: {
+
+                    facingMode: "user",
+
+                    width: {
+                        ideal: 640
+                    },
+
+                    height: {
+                        ideal: 480
+                    }
+
+                },
+
+                audio: false
+
+            });
+
+
+        video.srcObject = stream;
+
+
+        cameraMessage.classList.add(
+            "hidden"
+        );
+
+
+        connectionBadge.textContent =
+            "Camera active";
+
+        connectionBadge.className =
+            "px-3 py-1.5 rounded-full text-xs font-medium " +
+            "bg-emerald-100 dark:bg-emerald-500/10 " +
+            "text-emerald-700 dark:text-emerald-400";
+
+
+        scanStatus.textContent =
+            "Scanner active";
+
+        scanSubstatus.textContent =
+            "Looking for a registered face...";
+
+
+        scannerState.textContent =
+            "Active";
+
+
+        retryButton.classList.add(
+            "hidden"
+        );
+
+
+        scanning = true;
+
+        startScanning();
+
+    }
+    catch (error) {
+
+        console.error(error);
+
+
+        cameraMessage.innerHTML = `
+
+            <div class="text-center px-6">
+
+                <div class="text-4xl mb-3">
+                    ⚠️
+                </div>
+
+                <p class="font-medium">
+                    Camera access failed
+                </p>
+
+                <p class="text-sm text-slate-300 mt-2">
+                    Please allow camera permission
+                    and try again.
+                </p>
+
+            </div>
+
+        `;
+
+
+        connectionBadge.textContent =
+            "Camera unavailable";
+
+
+        connectionBadge.className =
+            "px-3 py-1.5 rounded-full text-xs font-medium " +
+            "bg-red-100 dark:bg-red-500/10 " +
+            "text-red-700 dark:text-red-400";
+
+
+        scannerState.textContent =
+            "Offline";
+
+
+        retryButton.classList.remove(
+            "hidden"
+        );
+
+    }
+
+}
+
+
+
+retryButton.addEventListener(
+    "click",
+    startCamera
+);
+
+
+
+// ============================================================
+// SEND FRAME TO FLASK
+// ============================================================
+
+async function processFrame() {
+
+    if (
+        processing ||
+        !video.videoWidth ||
+        !video.videoHeight
+    ) {
+
+        return;
+
+    }
+
+
+    processing = true;
+
+
+    try {
+
+        const captureCanvas =
+            document.createElement("canvas");
+
+
+        // Smaller image = faster upload
+        const width = 480;
+
+        const height =
+            Math.round(
+                video.videoHeight *
+                (width / video.videoWidth)
+            );
+
+
+        captureCanvas.width = width;
+        captureCanvas.height = height;
+
+
+        const ctx =
+            captureCanvas.getContext("2d");
+
+
+        ctx.drawImage(
+            video,
+            0,
+            0,
+            width,
+            height
+        );
+
+
+        const image =
+            captureCanvas.toDataURL(
+                "image/jpeg",
+                0.75
+            );
+
+
+        const response =
+            await fetch(
+                "/recognize",
+                {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        image: image
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+
+            throw new Error(
+                data.error ||
+                "Recognition failed"
+            );
+
+        }
+
+
+        handleRecognition(
+            data
+        );
+
+
+    }
+    catch (error) {
+
+        console.error(
+            "Recognition error:",
+            error
+        );
+
+    }
+    finally {
+
+        processing = false;
+
+    }
+
+}
+
+
+
+// ============================================================
+// HANDLE RECOGNITION RESULT
+// ============================================================
+
+function handleRecognition(data) {
+
+    clearOverlay();
+
+
+    if (
+        !data.face_detected ||
+        !data.results ||
+        data.results.length === 0
+    ) {
+
+        recognitionIcon.textContent =
+            "👤";
+
+        recognitionName.textContent =
+            "No student detected";
+
+        recognitionStatus.textContent =
+            "Position your face inside the camera.";
+
+        attendanceState.textContent =
+            "—";
+
+        return;
+
+    }
+
+
+    // First detected face
+    const result =
+        data.results[0];
+
+
+    drawFaceBox(
+        result.location,
+        result.recognized
+    );
+
+
+    if (result.recognized) {
+
+        recognitionIcon.textContent =
+            "✓";
+
+
+        recognitionName.textContent =
+            result.name;
+
+
+        if (result.attendance_marked) {
+
+            recognitionStatus.textContent =
+                "Attendance recorded successfully.";
+
+            attendanceState.textContent =
+                "Recorded";
+
+            attendanceState.className =
+                "font-medium text-emerald-500";
+
+        }
+        else {
+
+            recognitionStatus.textContent =
+                "Attendance already recorded today.";
+
+            attendanceState.textContent =
+                "Already marked";
+
+            attendanceState.className =
+                "font-medium text-blue-500";
+
+        }
+
+        updateStats();
+
+    }
+    else {
+
+        recognitionIcon.textContent =
+            "⚠️";
+
+
+        recognitionName.textContent =
+            "Unknown Student";
+
+
+        recognitionStatus.textContent =
+            "Face not found in the registered database.";
+
+
+        attendanceState.textContent =
+            "Not recorded";
+
+        attendanceState.className =
+            "font-medium text-red-500";
+
+    }
+
+}
+
+
+
+// ============================================================
+// DRAW FACE BOX
+// ============================================================
+
+function drawFaceBox(
+    location,
+    recognized
+) {
+
+    const [
+        top,
+        right,
+        bottom,
+        left
+    ] = location;
+
+
+    const scaleX =
+        canvas.width /
+        video.videoWidth;
+
+
+    const scaleY =
+        canvas.height /
+        video.videoHeight;
+
+
+    const x = left * scaleX;
+    const y = top * scaleY;
+
+    const width =
+        (right - left) * scaleX;
+
+    const height =
+        (bottom - top) * scaleY;
+
+
+    const ctx =
+        canvas.getContext("2d");
+
+
+    ctx.strokeStyle =
+        recognized
+            ? "#22c55e"
+            : "#ef4444";
+
+
+    ctx.lineWidth = 4;
+
+
+    ctx.strokeRect(
+        x,
+        y,
+        width,
+        height
+    );
+
+}
+
+
+
+// ============================================================
+// CLEAR OVERLAY
+// ============================================================
+
+function clearOverlay() {
+
+    const ctx =
+        canvas.getContext("2d");
+
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+}
+
+
+
+// ============================================================
+// RESIZE OVERLAY
+// ============================================================
+
+function resizeCanvas() {
+
+    canvas.width =
+        video.videoWidth;
+
+    canvas.height =
+        video.videoHeight;
+
+}
+
+
+video.addEventListener(
+    "loadedmetadata",
+    resizeCanvas
+);
+
+window.addEventListener(
+    "resize",
+    resizeCanvas
+);
+
+
+
+// ============================================================
+// SCANNING LOOP
+// ============================================================
+
+async function startScanning() {
+
+    while (scanning) {
+
+        await processFrame();
+
+        // Process approximately once per second
+        await new Promise(
+            resolve =>
+                setTimeout(
+                    resolve,
+                    900
+                )
+        );
+
+    }
+
+}
+
+
+
+// ============================================================
+// STATS
+// ============================================================
+
+async function updateStats() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/stats"
+            );
+
+
+        const data =
+            await response.json();
+
+
+        document.getElementById(
+            "totalStudents"
+        ).textContent =
+            data.total_students;
+
+
+        document.getElementById(
+            "presentToday"
+        ).textContent =
+            data.present_today;
+
+
+        document.getElementById(
+            "lastScanned"
+        ).textContent =
+            data.last_scanned ||
+            "—";
+
+
+        document.getElementById(
+            "lastScannedTime"
+        ).textContent =
+            data.last_scanned_time ||
+            "--";
+
+    }
+    catch (error) {
+
+        console.error(
+            "Stats error:",
+            error
+        );
+
+    }
+
+}
+
+
+
+// Initial stats
+updateStats();
+
+
+// Refresh statistics every 5 seconds
+setInterval(
+    updateStats,
+    5000
+);
+
+
+// Start camera
+startCamera();
+
+</script>
+
+
+</body>
+
+</html>
+

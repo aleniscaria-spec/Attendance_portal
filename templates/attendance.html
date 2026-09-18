@@ -1,0 +1,562 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Attendance Log | Attendance Portal</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+
+<body
+    class="min-h-screen bg-slate-100
+           dark:bg-slate-950
+           text-slate-900
+           dark:text-white"
+>
+
+
+<nav
+    class="sticky top-0 z-50
+           bg-white/80
+           dark:bg-slate-950/80
+           backdrop-blur-xl
+           border-b border-slate-200
+           dark:border-white/10"
+>
+
+    <div
+        class="max-w-7xl mx-auto px-5
+               h-16 flex items-center
+               justify-between"
+    >
+
+        <a
+            href="/admin"
+            class="font-bold"
+        >
+            Attendance Portal
+        </a>
+
+
+        <div class="flex gap-3">
+
+            <a
+                href="/user"
+                class="px-4 py-2 rounded-xl
+                       border border-slate-200
+                       dark:border-white/10"
+            >
+                Scanner
+            </a>
+
+
+            <a
+                href="/admin/logout"
+                class="px-4 py-2 rounded-xl
+                       bg-red-500/10
+                       text-red-500"
+            >
+                Logout
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+
+<main
+    class="max-w-7xl mx-auto px-5 py-10"
+>
+
+
+    <div
+        class="flex flex-col md:flex-row
+               md:items-end
+               justify-between gap-5 mb-8"
+    >
+
+        <div>
+
+            <p
+                class="text-emerald-500
+                       font-semibold text-sm"
+            >
+                ATTENDANCE MANAGEMENT
+            </p>
+
+            <h1
+                class="text-4xl font-bold mt-2"
+            >
+                Attendance Records
+            </h1>
+
+            <p
+                class="text-slate-500
+                       dark:text-slate-400 mt-2"
+            >
+                View and export recorded attendance.
+            </p>
+
+        </div>
+
+
+        <div class="flex gap-3">
+
+            <button
+                onclick="location.reload()"
+                class="px-4 py-2.5
+                       rounded-xl
+                       border border-slate-200
+                       dark:border-white/10"
+            >
+                Refresh
+            </button>
+
+
+            <button
+                onclick="exportCSV()"
+                class="px-4 py-2.5
+                       rounded-xl
+                       bg-emerald-600
+                       hover:bg-emerald-500
+                       text-white"
+            >
+                Export CSV
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- SEARCH -->
+
+    <div
+        class="mb-5"
+    >
+
+        <input
+            id="search"
+            type="text"
+            placeholder="Search student, date or time..."
+            class="w-full md:max-w-md
+                   px-4 py-3
+                   rounded-xl
+                   bg-white
+                   dark:bg-white/[0.05]
+                   border border-slate-200
+                   dark:border-white/10
+                   outline-none
+                   focus:border-blue-400"
+        >
+
+    </div>
+
+
+
+    <!-- TABLE -->
+
+    <div
+        class="overflow-hidden
+               rounded-3xl
+               bg-white
+               dark:bg-white/[0.05]
+               border border-slate-200
+               dark:border-white/10"
+    >
+
+        <div class="overflow-x-auto">
+
+            <table
+                id="attendanceTable"
+                class="w-full text-left"
+            >
+
+                <thead
+                    class="bg-slate-50
+                           dark:bg-white/5"
+                >
+
+                    <tr>
+
+                        <th
+                            class="px-6 py-4
+                                   text-sm
+                                   text-slate-500"
+                        >
+                            #
+                        </th>
+
+                        <th
+                            class="px-6 py-4
+                                   text-sm
+                                   text-slate-500"
+                        >
+                            Student
+                        </th>
+
+                        <th
+                            class="px-6 py-4
+                                   text-sm
+                                   text-slate-500"
+                        >
+                            Date
+                        </th>
+
+                        <th
+                            class="px-6 py-4
+                                   text-sm
+                                   text-slate-500"
+                        >
+                            Time
+                        </th>
+
+                        <th
+                            class="px-6 py-4
+                                   text-sm
+                                   text-slate-500"
+                        >
+                            Status
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for record in records %}
+
+                    <tr
+                        class="attendance-row
+                               border-t
+                               border-slate-100
+                               dark:border-white/5
+                               hover:bg-slate-50
+                               dark:hover:bg-white/5"
+                        data-search="
+                            {{ record.name }}
+                            {{ record.date }}
+                            {{ record.time }}
+                        "
+                    >
+
+                        <td
+                            class="px-6 py-5
+                                   text-sm
+                                   text-slate-500"
+                        >
+                            {{ loop.index }}
+                        </td>
+
+
+                        <td
+                            class="px-6 py-5"
+                        >
+
+                            <div
+                                class="font-semibold"
+                            >
+                                {{ record.name }}
+                            </div>
+
+                            <div
+                                class="text-xs
+                                       text-slate-500
+                                       mt-1"
+                            >
+                                Face recognized
+                            </div>
+
+                        </td>
+
+
+                        <td
+                            class="px-6 py-5
+                                   text-sm"
+                        >
+                            {{ record.date }}
+                        </td>
+
+
+                        <td
+                            class="px-6 py-5"
+                        >
+
+                            <span
+                                class="px-3 py-1.5
+                                       rounded-lg
+                                       bg-slate-100
+                                       dark:bg-white/5
+                                       font-mono
+                                       text-sm"
+                            >
+                                {{ record.time }}
+                            </span>
+
+                        </td>
+
+
+                        <td
+                            class="px-6 py-5"
+                        >
+
+                            <span
+                                class="inline-flex
+                                       px-3 py-1
+                                       rounded-full
+                                       bg-emerald-100
+                                       dark:bg-emerald-500/10
+                                       text-emerald-700
+                                       dark:text-emerald-400
+                                       text-xs
+                                       font-semibold"
+                            >
+                                Present
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+
+                        <td
+                            colspan="5"
+                            class="px-6 py-20
+                                   text-center"
+                        >
+
+                            <div
+                                class="text-5xl mb-4"
+                            >
+                                📋
+                            </div>
+
+                            <p
+                                class="font-semibold"
+                            >
+                                No attendance records
+                            </p>
+
+                            <p
+                                class="text-sm
+                                       text-slate-500
+                                       mt-2"
+                            >
+                                Attendance records will
+                                appear here after recognition.
+                            </p>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+</main>
+
+
+
+<script>
+
+// ============================================================
+// SEARCH
+// ============================================================
+
+document
+    .getElementById("search")
+    .addEventListener(
+        "input",
+        function () {
+
+            const query =
+                this.value
+                    .toLowerCase()
+                    .trim();
+
+
+            document
+                .querySelectorAll(
+                    ".attendance-row"
+                )
+                .forEach(
+                    row => {
+
+                        const text =
+                            row.dataset.search
+                                .toLowerCase();
+
+
+                        row.style.display =
+                            text.includes(query)
+                                ? ""
+                                : "none";
+
+                    }
+                );
+
+        }
+    );
+
+
+
+// ============================================================
+// EXPORT CSV
+// ============================================================
+
+function exportCSV() {
+
+    const rows = [
+
+        [
+            "Student",
+            "Date",
+            "Time",
+            "Status"
+        ]
+
+    ];
+
+
+    document
+        .querySelectorAll(
+            ".attendance-row"
+        )
+        .forEach(
+            row => {
+
+                if (
+                    row.style.display ===
+                    "none"
+                ) {
+
+                    return;
+
+                }
+
+
+                const cells =
+                    row.querySelectorAll(
+                        "td"
+                    );
+
+
+                rows.push([
+
+                    cells[1]
+                        .innerText
+                        .trim(),
+
+                    cells[2]
+                        .innerText
+                        .trim(),
+
+                    cells[3]
+                        .innerText
+                        .trim(),
+
+                    "Present"
+
+                ]);
+
+            }
+        );
+
+
+    const csv =
+        rows
+            .map(
+                row =>
+                    row
+                        .map(
+                            value =>
+                                `"${value
+                                    .replace(
+                                        /"/g,
+                                        '""'
+                                    )}"`
+                        )
+                        .join(",")
+            )
+            .join("\n");
+
+
+    const blob =
+        new Blob(
+            [csv],
+            {
+                type:
+                    "text/csv;charset=utf-8;"
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const link =
+        document.createElement(
+            "a"
+        );
+
+
+    link.href = url;
+
+
+    const today =
+        new Date()
+            .toISOString()
+            .slice(0, 10);
+
+
+    link.download =
+        `attendance-${today}.csv`;
+
+
+    link.click();
+
+
+    URL.revokeObjectURL(
+        url
+    );
+
+}
+
+</script>
+
+
+</body>
+
+</html>
+

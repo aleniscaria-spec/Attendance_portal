@@ -1,0 +1,526 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Register Student | Attendance Portal</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+
+<body
+    class="min-h-screen bg-slate-100
+           dark:bg-slate-950
+           text-slate-900
+           dark:text-white"
+>
+
+
+<nav
+    class="border-b border-slate-200
+           dark:border-white/10
+           bg-white/80
+           dark:bg-slate-950/80
+           backdrop-blur-xl"
+>
+
+    <div
+        class="max-w-5xl mx-auto px-5
+               h-16 flex items-center
+               justify-between"
+    >
+
+        <a
+            href="/admin"
+            class="font-bold"
+        >
+            ← Admin
+        </a>
+
+        <a
+            href="/admin/logout"
+            class="text-red-500 text-sm"
+        >
+            Logout
+        </a>
+
+    </div>
+
+</nav>
+
+
+
+<main
+    class="max-w-5xl mx-auto px-5 py-10"
+>
+
+
+    <div class="mb-8">
+
+        <p
+            class="text-blue-500
+                   font-semibold text-sm"
+        >
+            STUDENT MANAGEMENT
+        </p>
+
+        <h1
+            class="text-4xl font-bold mt-2"
+        >
+            Register Student
+        </h1>
+
+        <p
+            class="text-slate-500
+                   dark:text-slate-400 mt-2"
+        >
+            Capture a clear facial image for recognition.
+        </p>
+
+    </div>
+
+
+
+    <div
+        class="grid lg:grid-cols-[1fr_360px]
+               gap-6"
+    >
+
+
+        <!-- CAMERA -->
+
+        <section
+            class="rounded-3xl overflow-hidden
+                   bg-black
+                   border border-slate-200
+                   dark:border-white/10"
+        >
+
+            <div
+                class="relative aspect-video"
+            >
+
+                <video
+                    id="video"
+                    autoplay
+                    muted
+                    playsinline
+                    class="w-full h-full
+                           object-cover"
+                ></video>
+
+
+                <div
+                    class="absolute inset-6
+                           border-2
+                           border-blue-400/60
+                           rounded-2xl
+                           pointer-events-none"
+                ></div>
+
+            </div>
+
+
+            <div class="p-5">
+
+                <button
+                    id="captureButton"
+                    disabled
+                    class="w-full py-3.5
+                           rounded-xl
+                           bg-blue-600
+                           hover:bg-blue-500
+                           disabled:bg-slate-700
+                           disabled:text-slate-400
+                           text-white
+                           font-semibold
+                           transition"
+                >
+                    Capture Student Photo
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- FORM -->
+
+        <section
+            class="rounded-3xl p-6
+                   bg-white
+                   dark:bg-white/[0.05]
+                   border border-slate-200
+                   dark:border-white/10"
+        >
+
+            <label
+                class="text-sm font-medium"
+            >
+                Student Full Name
+            </label>
+
+
+            <input
+                id="studentName"
+                type="text"
+                placeholder="e.g. Alen I Scaria"
+                class="w-full mt-2
+                       px-4 py-3.5
+                       rounded-xl
+                       bg-slate-50
+                       dark:bg-black/20
+                       border border-slate-200
+                       dark:border-white/10
+                       outline-none
+                       focus:border-blue-400"
+            >
+
+
+            <div
+                id="status"
+                class="mt-6 text-sm
+                       text-slate-500"
+            >
+                Starting camera...
+            </div>
+
+
+            <div
+                class="mt-6 p-4 rounded-2xl
+                       bg-blue-50
+                       dark:bg-blue-500/10"
+            >
+
+                <p
+                    class="font-semibold
+                           text-blue-700
+                           dark:text-blue-300"
+                >
+                    Photo requirements
+                </p>
+
+                <ul
+                    class="text-sm
+                           text-slate-600
+                           dark:text-slate-400
+                           mt-2 space-y-1"
+                >
+
+                    <li>• Only one person in frame</li>
+                    <li>• Face the camera</li>
+                    <li>• Good lighting</li>
+                    <li>• Avoid sunglasses</li>
+                    <li>• Keep your face unobstructed</li>
+
+                </ul>
+
+            </div>
+
+
+            <a
+                href="/attendance"
+                class="block text-center
+                       text-sm text-blue-500
+                       mt-7"
+            >
+                View attendance records →
+            </a>
+
+        </section>
+
+    </div>
+
+</main>
+
+
+
+<script>
+
+const video =
+    document.getElementById("video");
+
+const nameInput =
+    document.getElementById("studentName");
+
+const captureButton =
+    document.getElementById(
+        "captureButton"
+    );
+
+const status =
+    document.getElementById("status");
+
+
+let stream = null;
+
+
+
+// ============================================================
+// CAMERA
+// ============================================================
+
+async function startCamera() {
+
+    try {
+
+        stream =
+            await navigator.mediaDevices
+                .getUserMedia({
+
+                    video: {
+
+                        facingMode: "user",
+
+                        width: {
+                            ideal: 640
+                        },
+
+                        height: {
+                            ideal: 480
+                        }
+
+                    },
+
+                    audio: false
+
+                });
+
+
+        video.srcObject = stream;
+
+
+        captureButton.disabled =
+            false;
+
+
+        status.textContent =
+            "Camera ready. Enter the student's name and capture.";
+
+        status.className =
+            "mt-6 text-sm text-emerald-500";
+
+    }
+    catch (error) {
+
+        console.error(error);
+
+        status.textContent =
+            "Camera access failed. Please allow camera permission.";
+
+        status.className =
+            "mt-6 text-sm text-red-500";
+
+    }
+
+}
+
+
+
+// ============================================================
+// CAPTURE
+// ============================================================
+
+captureButton.addEventListener(
+    "click",
+    async () => {
+
+        const name =
+            nameInput.value.trim();
+
+
+        if (!name) {
+
+            status.textContent =
+                "Please enter the student's full name.";
+
+            status.className =
+                "mt-6 text-sm text-red-500";
+
+            nameInput.focus();
+
+            return;
+
+        }
+
+
+        if (
+            !video.videoWidth ||
+            !video.videoHeight
+        ) {
+
+            return;
+
+        }
+
+
+        captureButton.disabled =
+            true;
+
+
+        captureButton.textContent =
+            "Registering...";
+
+
+        status.textContent =
+            "Processing facial image...";
+
+        status.className =
+            "mt-6 text-sm text-blue-500";
+
+
+        const canvas =
+            document.createElement(
+                "canvas"
+            );
+
+
+        const width = 640;
+
+        const height =
+            Math.round(
+                video.videoHeight *
+                (width / video.videoWidth)
+            );
+
+
+        canvas.width = width;
+        canvas.height = height;
+
+
+        const ctx =
+            canvas.getContext("2d");
+
+
+        ctx.drawImage(
+            video,
+            0,
+            0,
+            width,
+            height
+        );
+
+
+        const image =
+            canvas.toDataURL(
+                "image/jpeg",
+                0.95
+            );
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/register",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                name: name,
+
+                                image: image
+
+                            })
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (data.success) {
+
+                status.textContent =
+                    data.message;
+
+                status.className =
+                    "mt-6 text-sm text-emerald-500";
+
+
+                captureButton.textContent =
+                    "✓ Student Registered";
+
+
+                nameInput.value = "";
+
+
+                setTimeout(
+                    () => {
+
+                        captureButton.disabled =
+                            false;
+
+                        captureButton.textContent =
+                            "Capture Another Student";
+
+                    },
+                    2000
+                );
+
+            }
+            else {
+
+                throw new Error(
+                    data.error ||
+                    "Registration failed."
+                );
+
+            }
+
+        }
+        catch (error) {
+
+            console.error(error);
+
+
+            status.textContent =
+                error.message;
+
+            status.className =
+                "mt-6 text-sm text-red-500";
+
+
+            captureButton.disabled =
+                false;
+
+            captureButton.textContent =
+                "Capture Student Photo";
+
+        }
+
+    }
+);
+
+
+// Start
+startCamera();
+
+</script>
+
+
+</body>
+
+</html>
+

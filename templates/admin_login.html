@@ -1,0 +1,155 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Admin Login | Attendance Portal</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+
+<body
+    class="min-h-screen bg-slate-950
+           text-white flex items-center
+           justify-center p-6"
+>
+
+
+<div class="w-full max-w-md">
+
+
+    <div
+        class="rounded-3xl
+               border border-white/10
+               bg-white/[0.05]
+               backdrop-blur-xl
+               p-8 shadow-2xl"
+    >
+
+        <div
+            class="w-14 h-14 rounded-2xl
+                   bg-purple-500/15
+                   flex items-center
+                   justify-center
+                   text-2xl mb-6"
+        >
+            🔐
+        </div>
+
+
+        <p
+            class="text-purple-400
+                   text-sm font-semibold"
+        >
+            ADMINISTRATOR
+        </p>
+
+
+        <h1
+            class="text-3xl font-bold mt-2"
+        >
+            Welcome back
+        </h1>
+
+
+        <p
+            class="text-slate-400 mt-3"
+        >
+            Enter the administrator password
+            to continue.
+        </p>
+
+
+        {% with messages =
+            get_flashed_messages(
+                with_categories=true
+            )
+        %}
+
+            {% for category, message in messages %}
+
+                <div
+                    class="mt-5 p-4 rounded-xl
+                           bg-red-500/10
+                           border border-red-500/20
+                           text-red-400 text-sm"
+                >
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endwith %}
+
+
+        <form
+            method="POST"
+            class="mt-7"
+        >
+
+            <label
+                class="text-sm text-slate-300"
+            >
+                Administrator password
+            </label>
+
+
+            <input
+                type="password"
+                name="password"
+                required
+                autofocus
+                class="w-full mt-2
+                       px-4 py-3.5
+                       rounded-xl
+                       bg-black/30
+                       border border-white/10
+                       outline-none
+                       focus:border-purple-400"
+                placeholder="Enter password"
+            >
+
+
+            <button
+                type="submit"
+                class="w-full mt-5
+                       py-3.5 rounded-xl
+                       bg-purple-600
+                       hover:bg-purple-500
+                       font-semibold
+                       transition"
+            >
+                Sign in
+            </button>
+
+        </form>
+
+
+        <a
+            href="/"
+            class="block text-center
+                   text-sm text-slate-500
+                   hover:text-white mt-6"
+        >
+            ← Back to portal
+        </a>
+
+    </div>
+
+</div>
+
+
+</body>
+
+</html>
+

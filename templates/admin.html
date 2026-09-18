@@ -1,0 +1,322 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Admin Dashboard | Attendance Portal</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+
+<body
+    class="min-h-screen bg-slate-100
+           dark:bg-slate-950
+           text-slate-900
+           dark:text-white"
+>
+
+
+<nav
+    class="sticky top-0 z-50
+           bg-white/80
+           dark:bg-slate-950/80
+           backdrop-blur-xl
+           border-b border-slate-200
+           dark:border-white/10"
+>
+
+    <div
+        class="max-w-7xl mx-auto px-5
+               h-16 flex items-center
+               justify-between"
+    >
+
+        <a
+            href="/"
+            class="font-bold text-lg"
+        >
+            Attendance Portal
+        </a>
+
+
+        <a
+            href="/admin/logout"
+            class="px-4 py-2 rounded-xl
+                   bg-red-500/10
+                   text-red-500
+                   hover:bg-red-500/20"
+        >
+            Logout
+        </a>
+
+    </div>
+
+</nav>
+
+
+
+<main
+    class="max-w-7xl mx-auto px-5 py-10"
+>
+
+
+    <div class="mb-10">
+
+        <p
+            class="text-purple-500
+                   text-sm font-semibold"
+        >
+            ADMINISTRATION
+        </p>
+
+        <h1
+            class="text-4xl font-bold mt-2"
+        >
+            Control Center
+        </h1>
+
+        <p
+            class="text-slate-500
+                   dark:text-slate-400 mt-2"
+        >
+            Manage students and attendance.
+        </p>
+
+    </div>
+
+
+
+    <!-- STATISTICS -->
+
+    <div
+        class="grid md:grid-cols-2 gap-5 mb-8"
+    >
+
+        <div
+            class="rounded-2xl p-6
+                   bg-white
+                   dark:bg-white/[0.05]
+                   border border-slate-200
+                   dark:border-white/10"
+        >
+
+            <p
+                class="text-sm text-slate-500"
+            >
+                Registered Students
+            </p>
+
+            <p
+                class="text-4xl font-bold mt-2"
+            >
+                {{ total_students }}
+            </p>
+
+        </div>
+
+
+        <div
+            class="rounded-2xl p-6
+                   bg-white
+                   dark:bg-white/[0.05]
+                   border border-slate-200
+                   dark:border-white/10"
+        >
+
+            <p
+                class="text-sm text-slate-500"
+            >
+                Present Today
+            </p>
+
+            <p
+                class="text-4xl font-bold mt-2"
+            >
+                {{ present_today }}
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ACTIONS -->
+
+    <div
+        class="grid sm:grid-cols-2
+               lg:grid-cols-4 gap-5"
+    >
+
+
+        <a
+            href="/register"
+            class="rounded-2xl p-6
+                   bg-white
+                   dark:bg-white/[0.05]
+                   border border-slate-200
+                   dark:border-white/10
+                   hover:border-blue-400/40
+                   transition"
+        >
+
+            <div class="text-3xl">
+                👤
+            </div>
+
+            <h2
+                class="font-semibold text-lg mt-5"
+            >
+                Register Student
+            </h2>
+
+            <p
+                class="text-sm text-slate-500 mt-2"
+            >
+                Add a new face to the database.
+            </p>
+
+        </a>
+
+
+
+        <a
+            href="/attendance"
+            class="rounded-2xl p-6
+                   bg-white
+                   dark:bg-white/[0.05]
+                   border border-slate-200
+                   dark:border-white/10
+                   hover:border-emerald-400/40
+                   transition"
+        >
+
+            <div class="text-3xl">
+                📋
+            </div>
+
+            <h2
+                class="font-semibold text-lg mt-5"
+            >
+                Attendance Log
+            </h2>
+
+            <p
+                class="text-sm text-slate-500 mt-2"
+            >
+                View and export attendance records.
+            </p>
+
+        </a>
+
+
+
+        <a
+            href="/user"
+            class="rounded-2xl p-6
+                   bg-white
+                   dark:bg-white/[0.05]
+                   border border-slate-200
+                   dark:border-white/10
+                   hover:border-purple-400/40
+                   transition"
+        >
+
+            <div class="text-3xl">
+                📷
+            </div>
+
+            <h2
+                class="font-semibold text-lg mt-5"
+            >
+                Open Scanner
+            </h2>
+
+            <p
+                class="text-sm text-slate-500 mt-2"
+            >
+                Open the student attendance scanner.
+            </p>
+
+        </a>
+
+
+
+        <a
+            href="/reload_dataset"
+            class="rounded-2xl p-6
+                   bg-white
+                   dark:bg-white/[0.05]
+                   border border-slate-200
+                   dark:border-white/10
+                   hover:border-amber-400/40
+                   transition"
+        >
+
+            <div class="text-3xl">
+                🔄
+            </div>
+
+            <h2
+                class="font-semibold text-lg mt-5"
+            >
+                Reload Database
+            </h2>
+
+            <p
+                class="text-sm text-slate-500 mt-2"
+            >
+                Re-index registered face images.
+            </p>
+
+        </a>
+
+    </div>
+
+
+
+    <!-- SECURITY NOTICE -->
+
+    <div
+        class="mt-8 rounded-2xl
+               p-5
+               bg-amber-50
+               dark:bg-amber-500/10
+               border border-amber-200
+               dark:border-amber-500/20"
+    >
+
+        <p
+            class="font-semibold text-amber-700
+                   dark:text-amber-300"
+        >
+            Administrator access
+        </p>
+
+        <p
+            class="text-sm text-amber-700/80
+                   dark:text-amber-200/70 mt-1"
+        >
+            Registration and attendance management
+            are protected by administrator authentication.
+        </p>
+
+    </div>
+
+</main>
+
+
+</body>
+
+</html>
+
